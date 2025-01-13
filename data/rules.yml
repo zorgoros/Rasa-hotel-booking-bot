@@ -1,0 +1,54 @@
+version: "3.1"
+
+rules:
+  - rule: Say hello at conversation start
+    conversation_start: true
+    steps:
+      - action: utter_greet
+
+  - rule: Say hello anytime the user says hello
+    steps:
+      - intent: greet
+      - action: utter_greet
+
+  - rule: Say goodbye anytime the user says goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+
+  - rule: Say 'I am a bot' anytime the user challenges
+    steps:
+      - intent: bot_challenge
+      - action: utter_iamabot
+
+  - rule: Process name after information provided and confirm data
+    steps:
+      - slot_was_set:
+          - name
+          - date
+          - number_of_guests
+      - action: action_process_info
+      - action: utter_confirm_booking
+
+  - rule: confirm info
+    steps:
+      - action: utter_confirm_booking
+      - intent: affirm
+
+  - rule: Handle invalid name input
+    steps:
+      - slot_was_set:
+          - name: null
+      - action: utter_missing_name
+
+  - rule: Handle invalid date input
+    steps:
+      - slot_was_set:
+          - date: null
+      - action: utter_cannot_parse_date
+
+  - rule: Handle invalid guest count
+    steps:
+      - slot_was_set:
+          - number_of_guests: null
+      - action: utter_invalid_guests
