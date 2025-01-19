@@ -6,11 +6,14 @@ rules:
     steps:
       - action: utter_greet
 
+  # Greet rule
   - rule: Say hello anytime the user says hello
+
     steps:
       - intent: greet
       - action: utter_greet
-
+  
+  # Goodbye rule
   - rule: Say goodbye anytime the user says goodbye
     steps:
       - intent: goodbye
@@ -21,16 +24,36 @@ rules:
       - intent: bot_challenge
       - action: utter_iamabot
 
-  - rule: Process info after information provided and confirm data
+  # ---------------------------------------------------
+  # FORM-RELATED RULES
+  # ---------------------------------------------------
+  # Activate the form to collect booking info
+  - rule: Activate the hotel booking form
     steps:
-      - slot_was_set:
-          - name
-          - checkin_date
-          - checkout_date
-          - number_of_guests
+      - intent: book_room
+      - action: hotel_booking_form
+      - active_loop: hotel_booking_form
+    
+  # Loop the form until all required slots are filled
+  - rule: Continue the form (loop)
+    condition:
+      - active_loop: hotel_booking_form
+    steps:
+      - action: hotel_booking_form
+
+  # When the form is complete, submit & confirm booking
+  - rule: Submit the hotel booking form
+    condition:
+      - active_loop: hotel_booking_form
+    steps:
+      - action: hotel_booking_form
+      - active_loop: null   # stops the form
       - action: action_validate_inputs
       - action: utter_confirm_booking
 
+# ---------------------------------------------------
+  # FALLBACK
+# ---------------------------------------------------
 
   - rule: Fallback handling
     steps:

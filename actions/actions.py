@@ -1,97 +1,187 @@
-from rasa_sdk import Action
-from rasa_sdk.events import SlotSet
-from datetime import datetime, timedelta
+from typing import Any, Text, Dict, List, Optional
+from datetime import datetime
 import dateparser
+import sqlite3
+from rasa_sdk import Action, Tracker
+from rasa_sdk.executor import CollectingDispatcher
+from rasa_sdk.events import SlotSet, EventType, FollowupAction
 
+
+# ------------------------------------------------------------------------------
+# 1) A helper function to parse user-provided date text to a standard format
+#    (e.g., "dd-mm-yyyy"). Using dateparser for flexible date input.
+# ------------------------------------------------------------------------------
+def parse_date(date_text: str) -> Optional[str]:
+    """
+    Attempts to parse a user text date (e.g., "25th Jan" or "tomorrow")
+    into a standard dd-mm-yyyy format. Returns None if parsing fails.
+    """
+    if not date_text:
+        return None
+
+    parsed = dateparser.parse(date_text)
+    if parsed:
+        return parsed.strftime("%d-%m-%Y")
+    return None
+
+
+# ------------------------------------------------------------------------------
+# 2) ActionValidateInputs
+#    This action runs after the form is completed to validate or correct data.
+#    Then it saves the data in a (dummy) database.
+# ------------------------------------------------------------------------------
 class ActionValidateInputs(Action):
-    def name(self) -> str:
+    def name(self) -> Text:
         return "action_validate_inputs"
 
-    def validate_name(self, name: str) -> str:
-        """Validate and format the name."""
-        if not name:
-            return None
-        return " ".join(word.capitalize() for word in name.split())
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[EventType]:
+        """
+        1. Get slot values from the tracker.
+        2. Optionally validate or parse them (e.g. date format, number of guests).
+        3. Save the data to your DB (dummy SQLite example here).
+        4. If invalid, reset slots or re-prompt. Otherwise confirm to user.
+        """
 
-    def parse_date(self, date_text: str) -> str:
-        """Parse a date from natural language to a standard format (DD-MM-YYYY)."""
-        try:
-            parsed_date = dateparser.parse(date_text)
-            if parsed_date:
-                return parsed_date.strftime("%d-%m-%Y")
-        except Exception:
-            return None
-        return None
-
-    def validate_dates(self, checkin_date: str, checkout_date: str) -> tuple:
-        """Validate and format check-in and check-out dates."""
-        formatted_checkin = self.parse_date(checkin_date)
-        formatted_checkout = self.parse_date(checkout_date)
-
-        if not formatted_checkin or not formatted_checkout:
-            return None, None
-
-        checkin_dt = datetime.strptime(formatted_checkin, "%d-%m-%Y")
-        checkout_dt = datetime.strptime(formatted_checkout, "%d-%m-%Y")
-
-        if checkin_dt >= checkout_dt:
-            return None, None  # Invalid if check-out is not after check-in
-
-        return formatted_checkin, formatted_checkout
-
-    def validate_guests(self, guests_text: str) -> int:
-        """Validate and convert guest number from text to integer."""
-        try:
-            # Extract number from text
-            guests_text = guests_text.lower().replace("one", "1").replace("two", "2").replace("three", "3")
-            for word in guests_text.split():
-                if word.isdigit():
-                    guests = int(word)
-                    if 1 <= guests <= 20:  # Enforce maximum guests
-                        return guests
-        except Exception:
-            return None
-        return None
-
-    def run(self, dispatcher, tracker, domain):
+        # ----------------------------------------------------------------------
         # Retrieve slots
-        name = tracker.get_slot("name")
-        checkin_date = tracker.get_slot("checkin_date")
-        checkout_date = tracker.get_slot("checkout_date")
-        number_of_guests = tracker.get_slot("number_of_guests")
+        # ----------------------------------------------------------------------
+        name_slot = tracker.get_slot("name") or ""
+        checkin_slot = tracker.get_slot("checkin_date") or ""
+        checkout_slot = tracker.get_slot("checkout_date") or ""
+        guests_slot = tracker.get_slot("number_of_guests") or ""
 
-        # Validate name
-        formatted_name = self.validate_name(name)
-        if not formatted_name:
-            dispatcher.utter_message(text="Please provide a valid name.")
-            return [SlotSet("name", None)]
-
-        # Validate dates
-        formatted_checkin, formatted_checkout = self.validate_dates(checkin_date, checkout_date)
-        if not formatted_checkin or not formatted_checkout:
+        # ----------------------------------------------------------------------
+        # Validate / parse name (simple capitalization)
+        # ----------------------------------------------------------------------
+        # If you want stricter name rules, implement them here.
+        if not name_slot.strip():
             dispatcher.utter_message(
-                text="Please provide valid check-in and check-out dates. Check-out must be after check-in."
+                text="Please provide a valid name."
             )
-            return [SlotSet("checkin_date", None), SlotSet("checkout_date", None)]
+            # Clearing the slot to force the bot to re-ask
+            return [SlotSet("name", None), FollowupAction("hotel_booking_form")]
 
-        # Validate number of guests
-        validated_guests = self.validate_guests(number_of_guests)
-        if not validated_guests:
+        formatted_name = " ".join(word.capitalize() for word in name_slot.split())
+
+        # ----------------------------------------------------------------------
+        # Validate / parse check-in & check-out dates
+        # ----------------------------------------------------------------------
+        parsed_checkin = parse_date(checkin_slot)
+        parsed_checkout = parse_date(checkout_slot)
+
+        if not parsed_checkin or not parsed_checkout:
             dispatcher.utter_message(
-                text="Please provide a valid number of guests (1-20)."
+                text="Please provide valid check-in and check-out dates."
             )
-            return [SlotSet("number_of_guests", None)]
+            return [
+                SlotSet("checkin_date", None),
+                SlotSet("checkout_date", None),
+                FollowupAction("hotel_booking_form"),
+            ]
 
-        # Confirm valid data
-        dispatcher.utter_message(
-            text=(
-                f"Thank you! Your booking for {formatted_name} from {formatted_checkin} "
-                f"to {formatted_checkout} for {validated_guests} guests is confirmed."
+        # Convert to Python datetime for comparison if needed
+        dt_checkin = datetime.strptime(parsed_checkin, "%d-%m-%Y")
+        dt_checkout = datetime.strptime(parsed_checkout, "%d-%m-%Y")
+        if dt_checkin >= dt_checkout:
+            dispatcher.utter_message(
+                text="Check-out date must be after check-in date."
             )
+            return [
+                SlotSet("checkin_date", None),
+                SlotSet("checkout_date", None),
+                FollowupAction("hotel_booking_form"),
+            ]
+
+        # ----------------------------------------------------------------------
+        # Validate / parse number_of_guests
+        # ----------------------------------------------------------------------
+        # e.g. try to extract an integer from guests_slot
+        # This is just a simple approach. You can do something more robust.
+        import re
+        found_digits = re.findall(r"\d+", guests_slot)
+        if not found_digits:
+            dispatcher.utter_message(
+                text="Please provide a valid number of guests (e.g. '3')."
+            )
+            return [
+                SlotSet("number_of_guests", None),
+                FollowupAction("hotel_booking_form"),
+            ]
+
+        # We take the first digit we find as the guest number
+        guests_count = int(found_digits[0])
+        if guests_count < 1 or guests_count > 20:
+            dispatcher.utter_message(
+                text="Please provide a valid number of guests between 1 and 20."
+            )
+            return [
+                SlotSet("number_of_guests", None),
+                FollowupAction("hotel_booking_form"),
+            ]
+
+        # ----------------------------------------------------------------------
+        # 3) Check availability in a dummy database & "save" the booking
+        # ----------------------------------------------------------------------
+        # Example using local SQLite. Adjust for your real database.
+
+        # 3a. Connect to DB (or create if not exist)
+        #     In production, you'd likely connect to a remote DB or use SQLAlchemy.
+        conn = sqlite3.connect("hotel_bookings.db")
+        cursor = conn.cursor()
+
+        # 3b. Create a table if not exists
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS bookings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                checkin_date TEXT,
+                checkout_date TEXT,
+                guests INTEGER
+            )
+            """
         )
+
+        # 3c. Here you'd normally check if there's an available room.
+        #     We'll assume there's always availability for simplicity.
+        #     If not available, you'd do something like:
+        # dispatcher.utter_message(text="No rooms available for those dates!")
+        # return []
+
+        # 3d. Insert the booking row
+        cursor.execute(
+            """
+            INSERT INTO bookings (name, checkin_date, checkout_date, guests)
+            VALUES (?, ?, ?, ?)
+            """,
+            (formatted_name, parsed_checkin, parsed_checkout, guests_count),
+        )
+        conn.commit()
+
+        # (Optional) You might retrieve the newly inserted booking ID or other info
+        booking_id = cursor.lastrowid
+
+        # Close the DB connection
+        conn.close()
+
+        # ----------------------------------------------------------------------
+        # 4) Return a final "summary" to user or rely on utter_confirm_booking
+        #    The rule has "action_validate_inputs" -> "utter_confirm_booking",
+        #    which uses your domain's template. We'll just set the final, validated
+        #    slots here for the template.
+        # ----------------------------------------------------------------------
+        # Example: "Your booking for Mikel from 25-01-2023 to 26-01-2023 for 3 guests is confirmed!"
+        # The domain's "utter_confirm_booking" uses {name}, {checkin_date}, etc.
+
+        # Store final validated values in the slots so "utter_confirm_booking" sees them
         return [
             SlotSet("name", formatted_name),
-            SlotSet("checkin_date", formatted_checkin),
-            SlotSet("checkout_date", formatted_checkout),
-            SlotSet("number_of_guests", validated_guests),
+            SlotSet("checkin_date", parsed_checkin),
+            SlotSet("checkout_date", parsed_checkout),
+            SlotSet("number_of_guests", str(guests_count)),
         ]

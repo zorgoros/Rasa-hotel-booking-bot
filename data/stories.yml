@@ -2,23 +2,23 @@ version: "3.1"
 
 stories:
 
-- story: validate booking inputs
-  steps:
-    - intent: book_room
-    - action: action_validate_inputs
+# - story: validate booking inputs
+#   steps:
+#     - intent: book_room
+#     - action: action_validate_inputs
 
-- story: book a room (basic flow)
-  steps:
-    - intent: book_room
-    - action: utter_ask_name
-    - intent: provide_name
-    - action: utter_ask_checkin_date
-    - intent: provide_checkin_date
-    - action: utter_ask_checkout_date
-    - intent: provide_checkout_date
-    - action: utter_ask_guests
-    - intent: provide_guests
-    - action: utter_confirm_booking
+# - story: book a room (basic flow)
+#   steps:
+#     - intent: book_room
+#     - action: utter_ask_name
+#     - intent: provide_name
+#     - action: utter_ask_checkin_date
+#     - intent: provide_checkin_date
+#     - action: utter_ask_checkout_date
+#     - intent: provide_checkout_date
+#     - action: utter_ask_guests
+#     - intent: provide_guests
+#     - action: utter_confirm_booking
 
 
 

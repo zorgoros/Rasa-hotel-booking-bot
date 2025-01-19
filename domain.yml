@@ -1,7 +1,5 @@
 version: "3.1"
 
-actions:
-  - action_validate_inputs
 
 intents:
   - greet
@@ -27,32 +25,47 @@ slots:
   name:
     type: text
     mappings:
-      - type: from_entity
-        entity: name
+      - type: from_text
+        conditions:
+          - active_loop: hotel_booking_form
+            requested_slot: name
 
   checkin_date:
     type: text
     mappings:
-      - type: from_entity
-        entity: checkin_date
+      - type: from_text
+        conditions:
+          - active_loop: hotel_booking_form
+            requested_slot: checkin_date
 
   checkout_date:
     type: text
     mappings:
-      - type: from_entity
-        entity: checkout_date
+      - type: from_text
+        conditions:
+          - active_loop: hotel_booking_form
+            requested_slot: checkout_date
 
   number_of_guests:
     type: text
     mappings:
-      - type: from_entity
-        entity: number_of_guests
-  
+      - type: from_text
+        conditions:
+          - active_loop: hotel_booking_form
+            requested_slot: number_of_guests
+
   room:
     type: text
     mappings:
       - type: from_entity
-        entity: room
+
+forms:
+  hotel_booking_form:
+    required_slots:
+      - name
+      - checkin_date
+      - checkout_date
+      - number_of_guests
 
 
 responses:
@@ -68,7 +81,6 @@ responses:
 
   utter_iamabot:
     - text: "I am a bot, Made by ZorgOros to help you book a room."
-    - text: "I am a bot, Made by ZorgOros to help you with your booking."
 
   utter_confirm_booking:
     - text: "Your booking for {name} from {checkin_date} to {checkout_date} for {number_of_guests} guests is confirmed!"
@@ -82,28 +94,16 @@ responses:
   utter_ask_checkout_date:
     - text: "And what about your check-out date?"
     
-  utter_ask_guests:
+  utter_ask_number_of_guests:
     - text: "How many guests will be staying?"
 
   utter_fallback:
     - text: "I'm sorry, I didn't understand that. Could you please rephrase?"
 
-  # utter_confirm_data:
-  #   - text: "Please confirm your booking details: Name: {name}, Dates: {date}, Number of Guests: {number_of_guests}. Is this correct?"
 
-  # utter_invalid_date:
-  #   - text: "The date cannot be in the past. Please provide a future date."
-  
-  # utter_cannot_parse_date:
-  #   - text: "Sorry, I couldn't understand the date. Could you rephrase it in a format like 'next Monday' or '15th January'?"
-
-  # utter_invalid_guests:
-  #   - text: "The number of guests must be a valid integer greater than zero."
-
-  # utter_missing_name:
-  #   - text: "Please provide your name."
-
-
+actions:
+  - action_validate_inputs
+  - action_default_fallback
 
 
 session_config:
