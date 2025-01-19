@@ -21,34 +21,18 @@ rules:
       - intent: bot_challenge
       - action: utter_iamabot
 
-  - rule: Process name after information provided and confirm data
+  - rule: Process info after information provided and confirm data
     steps:
       - slot_was_set:
           - name
-          - date
+          - checkin_date
+          - checkout_date
           - number_of_guests
-      - action: action_process_info
+      - action: action_validate_inputs
       - action: utter_confirm_booking
 
-  - rule: confirm info
-    steps:
-      - action: utter_confirm_booking
-      - intent: affirm
 
-  - rule: Handle invalid name input
+  - rule: Fallback handling
     steps:
-      - slot_was_set:
-          - name: null
-      - action: utter_missing_name
-
-  - rule: Handle invalid date input
-    steps:
-      - slot_was_set:
-          - date: null
-      - action: utter_cannot_parse_date
-
-  - rule: Handle invalid guest count
-    steps:
-      - slot_was_set:
-          - number_of_guests: null
-      - action: utter_invalid_guests
+      - intent: nlu_fallback
+      - action: utter_fallback
