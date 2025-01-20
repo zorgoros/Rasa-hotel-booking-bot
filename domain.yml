@@ -13,6 +13,7 @@ intents:
   - provide_guests
   - provide_checkin_date
   - provide_checkout_date
+  - reset
 
 entities:
   - name
@@ -25,7 +26,8 @@ slots:
   name:
     type: text
     mappings:
-      - type: from_text
+      - type: from_entity
+        entity: name
         conditions:
           - active_loop: hotel_booking_form
             requested_slot: name
@@ -60,6 +62,9 @@ slots:
       - type: from_entity
         entity: room
 
+  booking_id:
+    type: text
+
 forms:
   hotel_booking_form:
     required_slots:
@@ -84,7 +89,7 @@ responses:
     - text: "I am a bot, Made by ZorgOros to help you book a room."
 
   utter_confirm_booking:
-    - text: "Your booking for {name} from {checkin_date} to {checkout_date} for {number_of_guests} guests is confirmed!"
+    - text: "Your booking for {name} from {checkin_date} to {checkout_date} for {number_of_guests} guests is confirmed!, Booking ID: {booking_id}."
 
   utter_ask_name:
     - text: "Could you please tell me your name?"
@@ -105,6 +110,7 @@ responses:
 actions:
   - action_validate_inputs
   - action_default_fallback
+  - action_reset_slots
 
 
 session_config:
