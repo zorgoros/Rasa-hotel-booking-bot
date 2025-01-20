@@ -58,6 +58,7 @@ slots:
     type: text
     mappings:
       - type: from_entity
+        entity: room
 
 forms:
   hotel_booking_form:
