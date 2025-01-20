@@ -12,19 +12,54 @@ from rasa_sdk.events import SlotSet, EventType, FollowupAction, AllSlotsReset   
 # 1) A helper function to parse user-provided date text to a standard format
 #    (e.g., "dd-mm-yyyy"). Using dateparser for flexible date input.
 # ------------------------------------------------------------------------------
-def parse_date(date_text: str) -> Optional[str]:
+def parse_date_basic(date_text: str) -> Optional[datetime]:
     """
-    Attempts to parse a user text date (e.g., "25th Jan" or "tomorrow")
-    into a standard dd-mm-yyyy format. Returns None if parsing fails.
+    A simple dateparser-based function that returns a Python datetime
+    if parse is successful, or None if it fails.
+    This does NOT do any fancy future-year logic. We rely on other logic
+    to interpret it relative to check-in, etc.
     """
     if not date_text:
         return None
-
     parsed = dateparser.parse(date_text)
-    if parsed:
-        return parsed.strftime("%d-%m-%Y")
-    return None
+    return parsed
 
+def parse_checkout_relative(checkout_text: str, dt_checkin: datetime) -> Optional[datetime]:
+    """
+    Parses the user’s checkout text. If the text includes a year explicitly,
+    dateparser will handle that. If not, dateparser might place it in the
+    current year. If that ends up before dt_checkin, we try bumping to the
+    same year as check-in or the next year. 
+    """
+    if not checkout_text:
+        return None
+
+    # parse with dateparser ignoring year (if user didn't specify)
+    dt_checkout = dateparser.parse(checkout_text)
+    if not dt_checkout:
+        return None  # unparseable
+
+    # If the parsed checkout is already >= checkin, great – no changes
+    if dt_checkout >= dt_checkin:
+        return dt_checkout
+
+    # If dt_checkout < dt_checkin, maybe the user omitted the year.
+    # We do one or two attempts:
+    #  1) set checkout's year to checkin's year
+    #  2) if that is still < checkin, increment one more year
+    #
+    # NOTE: This is a guess. If user typed "Jan 12" but check-in is "Jan 15, 2026",
+    # we try "Jan 12, 2026" => that is still < checkin => so we do "Jan 12, 2027".
+
+    # Step 1: create a dt with the same month/day, but the checkin's year
+    dt_checkout_same_year = dt_checkout.replace(year=dt_checkin.year)
+    if dt_checkout_same_year >= dt_checkin:
+        return dt_checkout_same_year
+
+    # Step 2: If it is still < checkin, add 1 year
+    dt_checkout_next_year = dt_checkout_same_year.replace(year=dt_checkin.year + 1)
+    # Now we assume that is the final guess
+    return dt_checkout_next_year
 
 # ------------------------------------------------------------------------------
 # 2) ActionValidateInputs
@@ -42,11 +77,16 @@ class ActionValidateInputs(Action):
         domain: Dict[Text, Any]
     ) -> List[EventType]:
         """
-        1. Get slot values from the tracker.
-        2. Optionally validate or parse them (e.g. date format, number of guests).
-        3. Save the data to DB (dummy SQLite example here).
-        4. If invalid, reset slots or re-prompt. Otherwise confirm to user.
+        1. Retrieve slots from the form: name, checkin_date, checkout_date, number_of_guests
+        2. Validate each:
+            - name: not empty
+            - checkin_date: not in the past
+            - checkout_date: strictly after checkin_date
+            - number_of_guests: integer, 1..20
+        3. If invalid, re-prompt the user by clearing the relevant slot(s).
+        4. If valid, store row in DB, return booking_id -> slot, so "utter_confirm_booking" can show it.
         """
+
 
         # ----------------------------------------------------------------------
         # Retrieve slots
@@ -59,7 +99,6 @@ class ActionValidateInputs(Action):
         # ----------------------------------------------------------------------
         # Validate / parse name (simple capitalization)
         # ----------------------------------------------------------------------
-        # stricter name rules, will be implemented here.
         if not name_slot.strip():
             dispatcher.utter_message(
                 text="Please provide a valid name."
@@ -72,40 +111,61 @@ class ActionValidateInputs(Action):
         # ----------------------------------------------------------------------
         # Validate / parse check-in & check-out dates
         # ----------------------------------------------------------------------
-        parsed_checkin = parse_date(checkin_slot)
-        parsed_checkout = parse_date(checkout_slot)
-        if not parsed_checkin or not parsed_checkout:
+        # Parse checkin
+        dt_checkin = parse_date_basic(checkin_slot)
+        if not dt_checkin:
             dispatcher.utter_message(
-                text="Please provide valid check-in and check-out dates."
+                text="Please provide a valid check-in date (e.g. '25 January 2025')."
             )
             return [
                 SlotSet("checkin_date", None),
-                SlotSet("checkout_date", None),
-                FollowupAction("hotel_booking_form"),
+                FollowupAction("hotel_booking_form")
             ]
 
-        #  ensure checkin is not in the past
+        # If checkin in the past, re-prompt
         now = datetime.now()
         if dt_checkin < now:
-            dispatcher.utter_message(text="Check-in date cannot be in the past.")
-            return [
-                SlotSet("checkin_date", None),
-                FollowupAction("hotel_booking_form"),
-            ]  
-        # Convert to Python datetime for comparison if needed
-        dt_checkin = datetime.strptime(parsed_checkin, "%d-%m-%Y")
-        dt_checkout = datetime.strptime(parsed_checkout, "%d-%m-%Y")
-        if dt_checkin >= dt_checkout:
             dispatcher.utter_message(
-                text="Check-out date must be after check-in date."
+                text=(
+                    "Your check-in date is in the past!\n"
+                    "If you meant next year, please specify the year.\n"
+                    "Please re-enter your check-in date."
+                )
             )
             return [
                 SlotSet("checkin_date", None),
-                SlotSet("checkout_date", None),
-                FollowupAction("hotel_booking_form"),
+                FollowupAction("hotel_booking_form")
             ]
 
-        
+        # Parse checkout in a "relative" manner
+        dt_checkout = parse_checkout_relative(checkout_slot, dt_checkin)
+        if not dt_checkout:
+            dispatcher.utter_message(
+                text="Please provide a valid check-out date (e.g. '26 January 2025')."
+            )
+            return [
+                SlotSet("checkout_date", None),
+                FollowupAction("hotel_booking_form")
+            ]
+
+        # Now if the final dt_checkout is STILL <= dt_checkin, fail
+        if dt_checkout <= dt_checkin:
+            dispatcher.utter_message(
+                text=(
+                    "Check-out date must be after your check-in date.\n"
+                    "If you meant a date next year, please specify that explicitly.\n"
+                    "Please re-enter your check-out date."
+                )
+            )
+            return [
+                SlotSet("checkout_date", None),
+                FollowupAction("hotel_booking_form")
+            ]
+
+        # At this point, we have validated checkin in the future, checkout > checkin
+        # Format them as dd-mm-yyyy strings
+        parsed_checkin_str = dt_checkin.strftime("%d-%m-%Y")
+        parsed_checkout_str = dt_checkout.strftime("%d-%m-%Y")
 
         # ----------------------------------------------------------------------
         # Validate / parse number_of_guests
@@ -168,7 +228,12 @@ class ActionValidateInputs(Action):
             INSERT INTO bookings (name, checkin_date, checkout_date, guests)
             VALUES (?, ?, ?, ?)
             """,
-            (formatted_name, parsed_checkin, parsed_checkout, guests_count),
+            (
+                formatted_name,
+                parsed_checkin_str,  # dd-mm-yyyy
+                parsed_checkout_str, # dd-mm-yyyy
+                guests_count
+            ),
         )
         conn.commit()
 
@@ -193,8 +258,8 @@ class ActionValidateInputs(Action):
         # Store final validated values in the slots so "utter_confirm_booking" sees them
         return [
             SlotSet("name", formatted_name),
-            SlotSet("checkin_date", parsed_checkin),
-            SlotSet("checkout_date", parsed_checkout),
+            SlotSet("checkin_date", parsed_checkin_str),
+            SlotSet("checkout_date", parsed_checkout_str),
             SlotSet("number_of_guests", str(guests_count)),
             SlotSet("booking_id", str_booking_id),
         ]
@@ -219,6 +284,8 @@ class ActionResetSlots(Action):
         # or a new greeting, etc.
 
 class ActionDefaultFallback(Action):
+    """Called when the user’s input is not recognized by Rasa’s NLU"""
+
     def name(self) -> Text:
         return "action_default_fallback"
 

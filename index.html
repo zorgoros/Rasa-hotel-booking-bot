@@ -2,158 +2,157 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Rasa Chat (Offline)</title>
+  <title>Hotel Booking ChatBot Demo</title>
+
+  <!-- Rasa Webchat script from the Botfront project (adjust version or link if needed) -->
+  <script src="https://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.min.js"></script>
+
   <style>
-    /* Simple styling for chat container */
+    /* Basic 2-column layout: left instructions & right chat. Adjust as desired. */
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      margin: 0; 
-      padding: 0;
-      background: #f5f5f5;
     }
-    #chat-container {
+    .container {
+      display: flex; /* side by side */
+      height: 100vh; /* fill entire window height */
+    }
+    .left {
+      flex: 1; /* take up half the screen */
+      padding: 2rem;
+      background: #f0f0f0; /* light background for instructions */
       display: flex;
       flex-direction: column;
-      width: 400px;
-      height: 600px;
-      margin: 50px auto;
-      border: 1px solid #ccc;
-      background: white;
+      justify-content: start;
     }
-    #chat-window {
-      flex: 1;
-      padding: 10px;
-      overflow-y: auto;
-      border-bottom: 1px solid #ccc;
+    .right {
+      flex: 1; /* the chat portion */
+      position: relative; /* we place webchat container here */
     }
-    .user-msg {
-      color: #333;
-      background: #dfffd8;
-      margin: 5px;
-      padding: 8px 12px;
+    h2 {
+      margin-top: 0;
+    }
+    .date-section {
+      margin: 1rem 0;
+      background: #fff;
+      padding: 1rem;
       border-radius: 5px;
-      width: fit-content;
+      box-shadow: 1px 1px 5px #ccc;
     }
-    .bot-msg {
-      color: #333;
-      background: #eee;
-      margin: 5px;
-      padding: 8px 12px;
-      border-radius: 5px;
-      width: fit-content;
+    label {
+      display: inline-block;
+      width: 120px;
+      font-weight: bold;
     }
-    .bot-msg, .user-msg {
-      max-width: 80%;
-      word-wrap: break-word;
+    input[type="date"] {
+      padding: 0.3rem;
     }
-    .bot-msg {
-      margin-left: 0;
-    }
-    .user-msg {
-      margin-left: auto;
-    }
-    #input-area {
-      display: flex;
-    }
-    #user_input {
-      flex: 1;
-      padding: 10px;
-      font-size: 14px;
-      border: none;
-      outline: none;
-    }
-    #send-btn {
-      background: #2196F3;
-      color: white;
-      border: none;
-      padding: 0 16px;
+    button {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
       cursor: pointer;
-      font-size: 14px;
     }
-    #send-btn:hover {
-      background: #1e7fc7;
+
+    /* The webchat container will be placed in the .right side */
+    #webchat {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      /* If you want to make it pop-up instead of occupying entire half, you can adjust styles. */
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <div class="left">
+      <h2>Hotel Bot Instructions</h2>
+      <p>
+        Welcome to our Hotel Booking ChatBot demo!
+        <br />
+        You can chat directly on the right side, or you can pick dates here and send them to the bot.
+      </p>
 
-<div id="chat-container">
-  <!-- Chat messages go here -->
-  <div id="chat-window"></div>
+      <div class="date-section">
+        <label for="checkin">Check-in:</label>
+        <input type="date" id="checkin" />
+        <br />
+        <label for="checkout">Check-out:</label>
+        <input type="date" id="checkout" />
+        <br />
+        <button onclick="sendDatesToBot()">Send Dates</button>
+      </div>
 
-  <!-- Input + send button -->
-  <div id="input-area">
-    <input type="text" id="user_input" placeholder="Type your message..." />
-    <button id="send-btn">Send</button>
+      <p>
+        <strong>Tips:</strong><br />
+        - If you prefer typing, just type into the chat on the right.<br />
+        - If you want to reset, type <code>reset</code> in the chat or click the 'Reset' button
+          (once you have that logic in Rasa).<br />
+        - Make sure your check-out date is after your check-in date.
+      </p>
+    </div>
+
+    <div class="right">
+      <!-- Rasa webchat container -->
+      <div id="webchat"></div>
+    </div>
   </div>
-</div>
 
-<script>
-// Adjust to your Rasa server endpoint:
-const RASA_URL = "http://localhost:5005/webhooks/rest/webhook";
+  <script>
+    // The function to grab the date inputs and send to Rasa as a message
+    function sendDatesToBot() {
+      const checkin = document.getElementById('checkin').value;   // e.g. "2026-01-15"
+      const checkout = document.getElementById('checkout').value; // e.g. "2026-01-25"
 
-// Access elements
-const chatWindow = document.getElementById("chat-window");
-const userInput = document.getElementById("user_input");
-const sendBtn = document.getElementById("send-btn");
-
-// Helper: Add a message to chat window
-function addMessage(text, isUser = false) {
-  const msgDiv = document.createElement("div");
-  msgDiv.className = isUser ? "user-msg" : "bot-msg";
-  msgDiv.innerText = text;
-  chatWindow.appendChild(msgDiv);
-  chatWindow.scrollTop = chatWindow.scrollHeight; 
-}
-
-// Send user message to Rasa
-async function sendMessageToRasa(message) {
-  try {
-    const response = await fetch(RASA_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ 
-        sender: "local-user",    // Or a random ID
-        message: message 
-      })
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    // data is an array of responses from Rasa
-    data.forEach(item => {
-      if(item.text) {
-        addMessage(item.text, false); // Bot message
+      // If either is empty, show a quick note (or you can handle differently)
+      if (!checkin || !checkout) {
+        alert("Please pick both check-in and check-out dates before sending.");
+        return;
       }
-    });
-  } catch (error) {
-    addMessage("Error: Could not reach Rasa server.", false);
-    console.error(error);
-  }
-}
 
-// On button click or Enter press, send message
-function handleSend() {
-  const text = userInput.value.trim();
-  if(text) {
-    addMessage(text, true); // show user text
-    userInput.value = "";   // clear input
-    sendMessageToRasa(text);
-  }
-}
+      // Convert them into a user-friendly text, e.g. "Check-in: 15 January 2026"
+      // This is entirely up to you. We'll do a quick approach:
+      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      const checkinObj = new Date(checkin);  // from "YYYY-MM-DD"
+      const checkoutObj = new Date(checkout);
 
-sendBtn.addEventListener("click", handleSend);
+      // Format e.g. "January 15, 2026"
+      const checkinStr = checkinObj.toLocaleDateString('en-GB', dateOptions);
+      const checkoutStr = checkoutObj.toLocaleDateString('en-GB', dateOptions);
 
-// Handle Enter key
-userInput.addEventListener("keyup", function(e) {
-  if (e.key === "Enter") {
-    handleSend();
-  }
-});
-</script>
+      // Then we combine them into one message string
+      const combinedMessage = `My check-in is ${checkinStr} and check-out is ${checkoutStr}`;
 
+      // Now we send this text to Rasa
+      // The webchat instance is "window.rasaWebchat.send"
+      window.rasaWebchat.send(combinedMessage);
+
+      // Optionally, we can also focus the chat input again
+      // or show a "Dates sent!" note, etc.
+      alert("Sent: " + combinedMessage);
+    }
+
+    // Initialize Rasa WebChat
+    // The minimal config is server: 'http://localhost:5005'
+    // In the real environment, ensure your Rasa server is up & running
+    // and CORS or tokens are properly set. Adjust at will.
+    (function() {
+      window.onload = () => {
+        window.WebChat.default.init({
+          selector: "#webchat",
+          initPayload: "/greet",
+          // The link to your Rasa server
+          socketUrl: "http://localhost:5005",
+          // For Rasa 3.x with websocket, typically: "ws://localhost:5005"
+          socketPath: "/socket.io/",
+          title: "HotelBooking Bot",
+          subtitle: "Ask me anything about booking",
+          // you can store session data or specify a custom ID if needed
+          // for now we do nothing special
+        });
+      };
+    })();
+  </script>
 </body>
 </html>
