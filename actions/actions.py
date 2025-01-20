@@ -1,11 +1,12 @@
+# Importing necessary modules and classes for type hinting, date parsing, database operations, and Rasa SDK functionality
 from typing import Any, Text, Dict, List, Optional
-from datetime import datetime
-import dateparser
-import sqlite3
-from rasa_sdk import Action, Tracker
-from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.events import SlotSet, EventType, FollowupAction
-
+from datetime import datetime  # For working with dates and times
+import dateparser  # For parsing user-provided date text into a standard format
+import sqlite3  # For database operations (e.g., storing booking data)
+import re  # For regular expression operations (e.g., text processing)
+from rasa_sdk import Action, Tracker  # For defining custom actions and tracking conversation state
+from rasa_sdk.executor import CollectingDispatcher  # For dispatching responses to the user
+from rasa_sdk.events import SlotSet, EventType, FollowupAction, AllSlotsReset   # For managing events and slots in the conversation
 
 # ------------------------------------------------------------------------------
 # 1) A helper function to parse user-provided date text to a standard format
@@ -43,7 +44,7 @@ class ActionValidateInputs(Action):
         """
         1. Get slot values from the tracker.
         2. Optionally validate or parse them (e.g. date format, number of guests).
-        3. Save the data to your DB (dummy SQLite example here).
+        3. Save the data to DB (dummy SQLite example here).
         4. If invalid, reset slots or re-prompt. Otherwise confirm to user.
         """
 
@@ -73,7 +74,6 @@ class ActionValidateInputs(Action):
         # ----------------------------------------------------------------------
         parsed_checkin = parse_date(checkin_slot)
         parsed_checkout = parse_date(checkout_slot)
-
         if not parsed_checkin or not parsed_checkout:
             dispatcher.utter_message(
                 text="Please provide valid check-in and check-out dates."
@@ -84,6 +84,14 @@ class ActionValidateInputs(Action):
                 FollowupAction("hotel_booking_form"),
             ]
 
+        #  ensure checkin is not in the past
+        now = datetime.now()
+        if dt_checkin < now:
+            dispatcher.utter_message(text="Check-in date cannot be in the past.")
+            return [
+                SlotSet("checkin_date", None),
+                FollowupAction("hotel_booking_form"),
+            ]  
         # Convert to Python datetime for comparison if needed
         dt_checkin = datetime.strptime(parsed_checkin, "%d-%m-%Y")
         dt_checkout = datetime.strptime(parsed_checkout, "%d-%m-%Y")
@@ -96,6 +104,8 @@ class ActionValidateInputs(Action):
                 SlotSet("checkout_date", None),
                 FollowupAction("hotel_booking_form"),
             ]
+
+        
 
         # ----------------------------------------------------------------------
         # Validate / parse number_of_guests
@@ -126,7 +136,7 @@ class ActionValidateInputs(Action):
         # ----------------------------------------------------------------------
         # 3) Check availability in a dummy database & "save" the booking
         # ----------------------------------------------------------------------
-        # Example using local SQLite. Adjust for real database.
+        #  using local SQLite.can be Adjusted for real database.
 
         # 3a. Connect to DB (or create if not exist)
         #     In production, will connect to a remote DB or use SQLAlchemy.
@@ -162,11 +172,14 @@ class ActionValidateInputs(Action):
         )
         conn.commit()
 
-        # (Optional) we might retrieve the newly inserted booking ID or other info
+        # we retrieve the newly inserted booking ID or other info
         booking_id = cursor.lastrowid
 
         # Close the DB connection
         conn.close()
+
+        # Convert booking_id to string for the slot
+        str_booking_id = str(booking_id)
 
         # ----------------------------------------------------------------------
         # 4) Return a final "summary" to user or rely on utter_confirm_booking
@@ -183,4 +196,39 @@ class ActionValidateInputs(Action):
             SlotSet("checkin_date", parsed_checkin),
             SlotSet("checkout_date", parsed_checkout),
             SlotSet("number_of_guests", str(guests_count)),
+            SlotSet("booking_id", str_booking_id),
         ]
+    
+class ActionResetSlots(Action):
+    """Clears all slots when user says 'reset'."""
+
+    def name(self) -> Text:
+        return "action_reset_slots"
+
+    async def run(
+        self, 
+        dispatcher: CollectingDispatcher, 
+        tracker: Tracker, 
+        domain: Dict[Text, Any]
+    ) -> List[EventType]:
+        dispatcher.utter_message(text="Resetting all your data. Let's start fresh!")
+        # Option 1: Clear all slots:
+        return [AllSlotsReset()]
+        # Option 2: If prefer to do something else after resetting,
+        # we can also return [AllSlotsReset(), FollowupAction("action_listen")] 
+        # or a new greeting, etc.
+
+class ActionDefaultFallback(Action):
+    def name(self) -> Text:
+        return "action_default_fallback"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[EventType]:
+        dispatcher.utter_message(
+            text="I’m sorry, I didn’t understand that. Type ‘help’ for instructions or ‘reset’ to start over."
+        )
+        return []

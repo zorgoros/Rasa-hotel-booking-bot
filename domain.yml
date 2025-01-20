@@ -14,6 +14,7 @@ intents:
   - provide_checkin_date
   - provide_checkout_date
   - reset
+  - help
 
 entities:
   - name
@@ -64,6 +65,10 @@ slots:
 
   booking_id:
     type: text
+    mappings:
+      - type: from_entity
+        entity: booking_id
+          
 
 forms:
   hotel_booking_form:
@@ -76,8 +81,9 @@ forms:
 
 responses:
   utter_greet:
-    - text: "Hello! How can I help you today?"
-    - text: "Hi! How can I help you today?"
+    - text: "Hello! I'm Helper_BOT ready to help you book a room. 
+        Type 'help' at any time if you stuck.
+        How can I help you today?"
 
   utter_goodbye:
     - text: "Bye"
@@ -106,6 +112,11 @@ responses:
   utter_fallback:
     - text: "I'm sorry, I didn't understand that. Could you please rephrase?"
 
+  utter_help:
+    - text: >
+        Here are some things you can do:
+        - Type "reset" to start over
+        - Type "book room" to begin the booking form
 
 actions:
   - action_validate_inputs

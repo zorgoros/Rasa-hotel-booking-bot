@@ -50,17 +50,26 @@ rules:
       - active_loop: null   # stops the form
       - action: action_validate_inputs
       - action: utter_confirm_booking
-  
+  # ---------------------------------------------------
   # This rule is triggered when the user wants to reset the bot
+  # ---------------------------------------------------
   - rule: Reset the bot
-      steps:
-        - intent: reset
-        - action: action_reset_slots
-# ---------------------------------------------------
+    steps:
+      - intent: reset
+      - action: action_reset_slots
+  # ---------------------------------------------------
   # FALLBACK
-# ---------------------------------------------------
+  # ---------------------------------------------------
 
   - rule: Fallback handling
     steps:
       - intent: nlu_fallback
       - action: utter_fallback
+
+  # ---------------------------------------------------
+  # HELP
+  # ---------------------------------------------------
+  - rule: Show help
+    steps:
+      - intent: help
+      - action: utter_help
