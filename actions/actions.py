@@ -58,7 +58,7 @@ class ActionValidateInputs(Action):
         # ----------------------------------------------------------------------
         # Validate / parse name (simple capitalization)
         # ----------------------------------------------------------------------
-        # If you want stricter name rules, implement them here.
+        # stricter name rules, will be implemented here.
         if not name_slot.strip():
             dispatcher.utter_message(
                 text="Please provide a valid name."
@@ -101,7 +101,6 @@ class ActionValidateInputs(Action):
         # Validate / parse number_of_guests
         # ----------------------------------------------------------------------
         # e.g. try to extract an integer from guests_slot
-        # This is just a simple approach. You can do something more robust.
         import re
         found_digits = re.findall(r"\d+", guests_slot)
         if not found_digits:
@@ -127,10 +126,10 @@ class ActionValidateInputs(Action):
         # ----------------------------------------------------------------------
         # 3) Check availability in a dummy database & "save" the booking
         # ----------------------------------------------------------------------
-        # Example using local SQLite. Adjust for your real database.
+        # Example using local SQLite. Adjust for real database.
 
         # 3a. Connect to DB (or create if not exist)
-        #     In production, you'd likely connect to a remote DB or use SQLAlchemy.
+        #     In production, will connect to a remote DB or use SQLAlchemy.
         conn = sqlite3.connect("hotel_bookings.db")
         cursor = conn.cursor()
 
@@ -147,9 +146,9 @@ class ActionValidateInputs(Action):
             """
         )
 
-        # 3c. Here you'd normally check if there's an available room.
+        # 3c. Here normally check if there's an available room.
         #     We'll assume there's always availability for simplicity.
-        #     If not available, you'd do something like:
+        #     If not available, we'll do something like:
         # dispatcher.utter_message(text="No rooms available for those dates!")
         # return []
 
@@ -163,7 +162,7 @@ class ActionValidateInputs(Action):
         )
         conn.commit()
 
-        # (Optional) You might retrieve the newly inserted booking ID or other info
+        # (Optional) we might retrieve the newly inserted booking ID or other info
         booking_id = cursor.lastrowid
 
         # Close the DB connection
@@ -172,7 +171,7 @@ class ActionValidateInputs(Action):
         # ----------------------------------------------------------------------
         # 4) Return a final "summary" to user or rely on utter_confirm_booking
         #    The rule has "action_validate_inputs" -> "utter_confirm_booking",
-        #    which uses your domain's template. We'll just set the final, validated
+        #    which uses the domain's template. We'll just set the final, validated
         #    slots here for the template.
         # ----------------------------------------------------------------------
         # Example: "Your booking for Mikel from 25-01-2023 to 26-01-2023 for 3 guests is confirmed!"
