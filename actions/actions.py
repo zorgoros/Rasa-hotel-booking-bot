@@ -51,9 +51,6 @@ def parse_checkout_relative(checkout_text: str, dt_checkin: datetime) -> Optiona
     # We do one or two attempts:
     #  1) set checkout's year to checkin's year
     #  2) if that is still < checkin, increment one more year
-    #
-    # NOTE: This is a guess. If user typed "Jan 12" but check-in is "Jan 15, 2026",
-    # we try "Jan 12, 2026" => that is still < checkin => so we do "Jan 12, 2027".
 
     # Step 1: create a dt with the same month/day, but the checkin's year
     dt_checkout_same_year = dt_checkout.replace(year=dt_checkin.year)
