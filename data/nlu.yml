@@ -1,117 +1,117 @@
 version: "3.1"
 
 nlu:
-- intent: greet
-  examples: |
-    - hey
-    - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
-
-- intent: goodbye
-  examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
-    - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
-
-- intent: affirm
-  examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
-      - yes please
-      - uhum
-      - uhumm
-      - yup
-      - yuppp
-
-- intent: deny
-  examples: |
-    - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
-      - nah
-      - nope
-
-- intent: mood_great
-  examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
-
-- intent: mood_unhappy
-  examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-      - extremely sad
-    - so saad
-    - so sad
-
-- intent: bot_challenge
-  examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
-      - what are you?
-
-- intent: book_room
-  examples: |
-      - I want to book a [room](room)
-      - Can you book a [room](room) for me?
-      - I'm looking for a [room](room)
-      - I'd like to make a [reservation](room)
-      - I need a [room](room)
-      - I need a [room](room) from [June 1 to June 5](date)
-      - I will be there from [July 1 to July 25](date)
-      - I need [place](room) for [two](number_of_guests) from [June 1 to June 5](date)
-      - want to reserve [hotel room](room)
-      - need [hotel](room)
-
-      
+  - intent: greet
+    examples: |
+      - hey
+      - hello
+      - hi
+      - hello there
+      - good morning
+      - good evening
+      - moin
+      - hey there
+      - let's go
+      - hey dude
+      - goodmorning
+      - goodevening
+      - good afternoon
+  
+  - intent: goodbye
+    examples: |
+      - cu
+      - good by
+      - cee you later
+      - good night
+      - bye
+      - goodbye
+      - have a nice day
+      - see you around
+      - bye bye
+      - see you later
+  
+  - intent: affirm
+    examples: |
+      - yes
+      - y
+      - indeed
+      - of course
+      - that sounds good
+      - correct
+        - yes please
+        - uhum
+        - uhumm
+        - yup
+        - yuppp
+  
+  - intent: deny
+    examples: |
+      - no
+      - n
+      - never
+      - I don't think so
+      - don't like that
+      - no way
+      - not really
+        - nah
+        - nope
+  
+  - intent: mood_great
+    examples: |
+      - perfect
+      - great
+      - amazing
+      - feeling like a king
+      - wonderful
+      - I am feeling very good
+      - I am great
+      - I am amazing
+      - I am going to save the world
+      - super stoked
+      - extremely good
+      - so so perfect
+      - so good
+      - so perfect
+  
+  - intent: mood_unhappy
+    examples: |
+      - my day was horrible
+      - I am sad
+      - I don't feel very well
+      - I am disappointed
+      - super sad
+      - I'm so sad
+      - sad
+      - very sad
+      - unhappy
+      - not good
+      - not very good
+        - extremely sad
+      - so saad
+      - so sad
+  
+  - intent: bot_challenge
+    examples: |
+      - are you a bot?
+      - are you a human?
+      - am I talking to a bot?
+      - am I talking to a human?
+        - what are you?
+  
+  - intent: book_room
+    examples: |
+        - I want to book a [room](room)
+        - Can you book a [room](room) for me?
+        - I'm looking for a [room](room)
+        - I'd like to make a [reservation](room)
+        - I need a [room](room)
+        - I need a [room](room) from [June 1 to June 5](date)
+        - I will be there from [July 1 to July 25](date)
+        - I need [place](room) for [two](number_of_guests) from [June 1 to June 5](date)
+        - want to reserve [hotel room](room)
+        - need [hotel](room)
+  
+        
   - intent: provide_name
     examples: |
       - I am [Mohammed Al-Hassan](name)
