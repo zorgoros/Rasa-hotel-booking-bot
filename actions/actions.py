@@ -7,6 +7,9 @@ import re  # For regular expression operations (e.g., text processing)
 from rasa_sdk import Action, Tracker  # For defining custom actions and tracking conversation state
 from rasa_sdk.executor import CollectingDispatcher  # For dispatching responses to the user
 from rasa_sdk.events import SlotSet, EventType, FollowupAction, AllSlotsReset   # For managing events and slots in the conversation
+import logging # For logging messages to the console
+
+logger = logging.getLogger(__name__) # For logging messages to the console
 
 # ------------------------------------------------------------------------------
 # 1) A helper function to parse user-provided date text to a standard format
@@ -86,7 +89,6 @@ class ActionValidateInputs(Action):
         3. If invalid, re-prompt the user by clearing the relevant slot(s).
         4. If valid, store row in DB, return booking_id -> slot, so "utter_confirm_booking" can show it.
         """
-
 
         # ----------------------------------------------------------------------
         # Retrieve slots
@@ -277,6 +279,7 @@ class ActionResetSlots(Action):
         domain: Dict[Text, Any]
     ) -> List[EventType]:
         dispatcher.utter_message(text="Resetting all your data. Let's start fresh!")
+        logger.info("ActionResetSlots triggered")
         # Option 1: Clear all slots:
         return [AllSlotsReset()]
         # Option 2: If prefer to do something else after resetting,
