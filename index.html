@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chatbot UI</title>
+  <title>Booking_Helper_BOT UI</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -115,7 +115,7 @@
 </head>
 <body>
   <div class="chat-container">
-    <div class="chat-title">Chatbot</div>
+    <div class="chat-title">Booking_Helper_BOT</div>
 
     <div class="chat-header">
       <button onclick="showInstructions()">Instruction</button>
@@ -148,11 +148,18 @@
   </div>
 
   <div class="popup" id="instructionsPopup">
-    <h2>Instructions</h2>
-    <p>Some instructions on how to use the bot (placeholder text):</p>
+    <h2>How to Use the Bot</h2>
+    <p><strong>Examples of valid inputs:</strong></p>
     <ul>
-      <li>You can type normal text or date info. The bot does validation.</li>
-      <li>Dates must be in the future, etc.</li>
+      <li>Name: <em>"My name is John Smith"</em></li>
+      <li>Check-in: <em>"25 January 2025"</em> or <em>"tomorrow"</em></li>
+      <li>Check-out: <em>"30 January 2025"</em> or <em>"next week"</em></li>
+      <li>Guests: <em>"2 people"</em> or <em>"3"</em></li>
+    </ul>
+    <p><strong>Commands:</strong></p>
+    <ul>
+      <li>Type <code>reset</code> or click <strong>Restart</strong> to start over.</li>
+      <li>Type <code>help</code> for assistance.</li>
     </ul>
   </div>
 

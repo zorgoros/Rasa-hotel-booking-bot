@@ -81,8 +81,7 @@ forms:
 
 responses:
   utter_greet:
-    - text: "Hello! I'm Helper_BOT ready to help you book a room. 
-        Type 'help' at any time if you stuck.
+    - text: "Hello! I'm Helper_BOT ready to help you book a room.\n
         How can I help you today?"
 
   utter_goodbye:
