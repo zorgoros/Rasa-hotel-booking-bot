@@ -34,7 +34,7 @@ cycler==0.12.1
 cymem==2.0.10
 dask==2022.10.2
 dateparser==1.2.0
-dnspython==2.3.0
+dnspython==2.6.1
 docopt==0.6.2
 en_core_web_md @ https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0-py3-none-any.whl#sha256=5e6329fe3fecedb1d1a02c3ea2172ee0fede6cea6e4aefb6a02d832dba78a310
 fbmessenger==6.0.0
