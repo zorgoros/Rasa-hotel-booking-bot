@@ -242,15 +242,12 @@
     // "Restart" the chat
     // Clear the UI and also generate a new senderId so Rasa sees it as a new conversation
     function restartChat() {
-      console.log("restartChat triggered");
-      setTimeout(() => {
-        document.getElementById("chatBody").innerHTML = "";
+      if (confirm("Are you sure you want to restart the chat?")) {
+        console.log("restartChat triggered");
+        document.getElementById("chatBody").innerHTML = ""; // Clear chat immediately
         senderId = "user_" + Math.floor(Math.random() * 1000000);
-        // Optionally, send a special message to Rasa to reset slots
-        // e.g. sendMessage("/reset") or "/restart"
-        // We'll do it automatically:
-        sendHiddenMessage("/reset");
-      }, 5000); // Delay of 5 seconds
+        sendHiddenMessage("/reset"); // Send reset command without delay
+      }
     }
 
     // A helper function if we want to send a message that doesn't show in UI
