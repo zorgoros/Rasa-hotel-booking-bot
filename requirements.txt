@@ -102,7 +102,7 @@ pydot==1.4.2
 Pygments==2.19.1
 PyJWT==2.10.1
 pykwalify==1.8.0
-pymongo==4.3.3
+pymongo==4.6.3
 pyparsing==3.2.1
 pyrsistent==0.20.0
 python-crfsuite==0.9.11
