@@ -11,6 +11,7 @@ import logging # For logging messages to the console
 
 logger = logging.getLogger(__name__) # For logging messages to the console
 
+
 # ------------------------------------------------------------------------------
 # 1) A helper function to parse user-provided date text to a standard format
 #    (e.g., "dd-mm-yyyy"). Using dateparser for flexible date input.
@@ -202,7 +203,7 @@ class ActionValidateInputs(Action):
 
         # 3a. Connect to DB (or create if not exist)
         #     In production, will connect to a remote DB or use SQLAlchemy.
-        conn = sqlite3.connect("hotel_bookings.db")
+        conn = sqlite3.connect("database/hotel_bookings.db")
         cursor = conn.cursor()
 
         # 3b. Create a table if not exists
