@@ -157,12 +157,11 @@
   </div>
 
   <script>
-    // CHANGE 1:
-    // We'll define a Rasa server endpoint for the REST channel:
+    // Define a Rasa server endpoint for the REST channel:
     const RASA_SERVER_URL = "http://localhost:5005/webhooks/rest/webhook";
 
-    // We'll keep a "senderId" to track the conversation session on Rasa's side:
-    // You can generate a random ID each time or store in localStorage.
+    // Keep a "senderId" to track the conversation session on Rasa's side:
+    // Generate a random ID each time or store in localStorage.
     let senderId = "user_" + Math.floor(Math.random() * 1000000);
 
     // A simple function to show a message in our chat body
@@ -241,7 +240,7 @@
     }
 
     // "Restart" the chat
-    // We'll clear the UI and also generate a new senderId so Rasa sees it as a new conversation
+    // Clear the UI and also generate a new senderId so Rasa sees it as a new conversation
     function restartChat() {
       document.getElementById("chatBody").innerHTML = "";
       senderId = "user_" + Math.floor(Math.random() * 1000000);
@@ -251,7 +250,7 @@
       sendHiddenMessage("/reset");
     }
 
-    // A helper function if you want to send a message that doesn't show in UI
+    // A helper function if we want to send a message that doesn't show in UI
     async function sendHiddenMessage(message) {
       try {
         const response = await fetch(RASA_SERVER_URL, {
@@ -262,7 +261,7 @@
         const data = await response.json();
         data.forEach((item) => {
           if (item.text) {
-            // If you want them displayed, you can do:
+            // If we want them displayed, we can do:
             appendMessage(item.text, true);
           }
         });
