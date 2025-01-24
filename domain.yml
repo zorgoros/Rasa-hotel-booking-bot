@@ -22,6 +22,7 @@ entities:
   - checkout_date
   - number_of_guests
   - room
+  - booking_id
 
 slots:
   name:

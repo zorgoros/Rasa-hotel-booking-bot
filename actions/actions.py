@@ -47,20 +47,7 @@ def parse_checkout_relative(checkout_text: str, dt_checkin: datetime) -> Optiona
     if dt_checkout >= dt_checkin:
         return dt_checkout
 
-    # If dt_checkout < dt_checkin, maybe the user omitted the year.
-    # We do one or two attempts:
-    #  1) set checkout's year to checkin's year
-    #  2) if that is still < checkin, increment one more year
-
-    # Step 1: create a dt with the same month/day, but the checkin's year
-    dt_checkout_same_year = dt_checkout.replace(year=dt_checkin.year)
-    if dt_checkout_same_year >= dt_checkin:
-        return dt_checkout_same_year
-
-    # Step 2: If it is still < checkin, add 1 year
-    dt_checkout_next_year = dt_checkout_same_year.replace(year=dt_checkin.year + 1)
-    # Now we assume that is the final guess
-    return dt_checkout_next_year
+    return dt_checkout
 
 # ------------------------------------------------------------------------------
 # 2) ActionValidateInputs
