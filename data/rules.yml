@@ -18,6 +18,7 @@ rules:
     steps:
       - intent: goodbye
       - action: utter_goodbye
+      - active_loop: null
 
   - rule: Say 'I am a bot' anytime the user challenges
     steps:
@@ -57,6 +58,7 @@ rules:
     steps:
       - intent: reset
       - action: action_reset_slots
+      - action: utter_help 
   # ---------------------------------------------------
   # FALLBACK
   # ---------------------------------------------------

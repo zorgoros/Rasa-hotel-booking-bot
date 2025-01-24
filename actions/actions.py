@@ -129,7 +129,6 @@ class ActionValidateInputs(Action):
                 text=(
                     "Your check-in date is in the past!\n"
                     "If you meant next year, please specify the year.\n"
-                    "Please re-enter your check-in date."
                 )
             )
             return [
@@ -154,7 +153,6 @@ class ActionValidateInputs(Action):
                 text=(
                     "Check-out date must be after your check-in date.\n"
                     "If you meant a date next year, please specify that explicitly.\n"
-                    "Please re-enter your check-out date."
                 )
             )
             return [

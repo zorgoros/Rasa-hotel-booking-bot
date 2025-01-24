@@ -23,11 +23,11 @@ pipeline:
     model: "en_core_web_md"
   - name: SpacyTokenizer
   - name: SpacyFeaturizer
-  # - name: RegexEntityExtractor
-  #   use_lookup_tables: true
-  #   case_sensitive: false
-  #   use_regexes: true
-  #   use_word_boundaries: false
+  - name: RegexEntityExtractor
+    use_lookup_tables: true
+    case_sensitive: false
+    use_regexes: true
+    use_word_boundaries: false
   - name: DIETClassifier
     epochs: 150
     entity_recognition: true

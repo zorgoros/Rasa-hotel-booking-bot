@@ -16,7 +16,49 @@ nlu:
       - goodmorning
       - goodevening
       - good afternoon
-  
+      - hey there
+      - hello hello
+      - hi buddy
+      - hey man
+      - howdy
+      - hi friend
+      - hi hi hi
+      - greetings!
+      - hello world
+      - hey, what's up?
+      - good day
+      - yo
+      - hiya
+      - nice to see you
+      - hello everyone
+      - hey! how's it going?
+      - hi again
+      - hi, how are you doing?
+      - good afternoon to you
+      - hey, how’s everything?
+      - hi dear
+      - hi good to see you
+      - oh hi!
+      - hey, any updates?
+      - hi chat
+      - greet
+      - greeting
+      - hi, how are you?
+      - my greetings
+      - how you doing?
+      - how are you doing today?
+      - how are you today?
+      - helo
+      - hel0
+      - helloooo
+      - helllll0000
+      - hel0o0o
+      - salam
+      - salam alaikum
+      - assalam o alaikum
+      - maa salama
+
+
   - intent: goodbye
     examples: |
       - cu
@@ -29,7 +71,42 @@ nlu:
       - see you around
       - bye bye
       - see you later
-  
+      - goodbye for now
+      - see you soon
+      - catch you later
+      - gotta go
+      - I have to leave
+      - have a nice one
+      - see you next time
+      - later gator
+      - I should get going
+      - talk to you later
+      - farewell
+      - adios
+      - thanks, bye!
+      - that’s all, bye
+      - ciao
+      - bye for now
+      - I'm off
+      - until next time
+      - I’m out
+      - take care, bye
+      - I'm done, see ya
+      - ok bye bye
+      - I'm off now
+      - byebye
+      - byby
+      - byeby
+      - bybye
+      - by by
+      - goobye
+      - goodby
+      - goo by
+      - goo bye
+      - bbyyy
+      - byeee
+      - byeeee
+
   - intent: affirm
     examples: |
       - yes
@@ -38,12 +115,12 @@ nlu:
       - of course
       - that sounds good
       - correct
-        - yes please
-        - uhum
-        - uhumm
-        - yup
-        - yuppp
-  
+      - yes please
+      - uhum
+      - uhumm
+      - yup
+      - yuppp
+
   - intent: deny
     examples: |
       - no
@@ -53,9 +130,9 @@ nlu:
       - don't like that
       - no way
       - not really
-        - nah
-        - nope
-  
+      - nah
+      - nope
+
   - intent: mood_great
     examples: |
       - perfect
@@ -72,7 +149,7 @@ nlu:
       - so so perfect
       - so good
       - so perfect
-  
+
   - intent: mood_unhappy
     examples: |
       - my day was horrible
@@ -86,32 +163,32 @@ nlu:
       - unhappy
       - not good
       - not very good
-        - extremely sad
+      - extremely sad
       - so saad
       - so sad
-  
+
   - intent: bot_challenge
     examples: |
       - are you a bot?
       - are you a human?
       - am I talking to a bot?
       - am I talking to a human?
-        - what are you?
-  
+      - what are you?
+
   - intent: book_room
     examples: |
-        - I want to book a [room](room)
-        - Can you book a [room](room) for me?
-        - I'm looking for a [room](room)
-        - I'd like to make a [reservation](room)
-        - I need a [room](room)
-        - I need a [room](room) from [June 1 to June 5](date)
-        - I will be there from [July 1 to July 25](date)
-        - I need [place](room) for [two](number_of_guests) from [June 1 to June 5](date)
-        - want to reserve [hotel room](room)
-        - need [hotel](room)
-  
-        
+      - I want to book a [room](room)
+      - Can you book a [room](room) for me?
+      - I'm looking for a [room](room)
+      - I'd like to make a [reservation](room)
+      - I need a [room](room)
+      - I need a [room](room) from [June 1 to June 5](date)
+      - I will be there from [July 1 to July 25](date)
+      - I need [place](room) for [two](number_of_guests) from [June 1 to June 5](date)
+      - want to reserve [hotel room](room)
+      - need [hotel](room)
+
+
   - intent: provide_name
     examples: |
       - I am [Mohammed Al-Hassan](name)
@@ -410,3 +487,15 @@ nlu:
       - [one](number_of_guests) person
       - [two](number_of_guests) friends
     
+  - intent: reset
+    examples: |
+      - reset
+      - start over
+      - clear
+      - restart
+      - new session
+      - forget my data
+      - begin again
+      - cancel
+      - wipe data
+      - restart process
