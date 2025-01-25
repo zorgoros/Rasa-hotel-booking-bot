@@ -8,6 +8,7 @@ from rasa_sdk import Action, Tracker  # For defining custom actions and tracking
 from rasa_sdk.executor import CollectingDispatcher  # For dispatching responses to the user
 from rasa_sdk.events import SlotSet, EventType, FollowupAction, AllSlotsReset   # For managing events and slots in the conversation
 import logging # For logging messages to the console
+import os
 
 logger = logging.getLogger(__name__) # For logging messages to the console
 
@@ -185,6 +186,7 @@ class ActionValidateInputs(Action):
 
         # 3a. Connect to DB (or create if not exist)
         #     In production, will connect to a remote DB or use SQLAlchemy.
+        os.makedirs("database", exist_ok=True)
         conn = sqlite3.connect("database/hotel_bookings.db")
         cursor = conn.cursor()
 
