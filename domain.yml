@@ -93,8 +93,10 @@ responses:
   utter_iamabot:
     - text: "I am a bot, Made by ZorgOros to help you book a room."
 
-  utter_confirm_booking:
-    - text: "Your booking for {name} from {checkin_date} to {checkout_date} for {number_of_guests} guests is confirmed!, Booking ID: {booking_id}."
+  utter_confirm_booking: 
+    - text: |
+        - Your booking for {name} from {checkin_date} to {checkout_date} for {number_of_guests} guests is confirmed!, Booking ID: {booking_id}.
+        - If you want to make another booking, type "reset" to start over.
 
   utter_ask_name:
     - text: "Could you please tell me your name?"
@@ -115,7 +117,7 @@ responses:
     - text: |
         Here are some things you can do:
         - Type "reset" to start over
-        - Type "book room" to begin the booking form
+        - Type "book room" to begin the booking form ( i fyou already did this, you can type "reset" to start over)
 
   utter_reset:
     - text: "All slots have been reset, you can make a new booking now."
