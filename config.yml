@@ -11,14 +11,6 @@ assistant_id: 20250104-094740-cruel-underwriter
 language: en
 
 pipeline:
-  # - name: WhitespaceTokenizer
-  # - name: RegexFeaturizer
-  # - name: LexicalSyntacticFeaturizer
-  # - name: CountVectorsFeaturizer
-  # - name: CountVectorsFeaturizer
-  #   analyzer: "char_wb"
-  #   min_ngram: 1
-  #   max_ngram: 4
   - name: SpacyNLP
     model: "en_core_web_md"
   - name: SpacyTokenizer
@@ -28,6 +20,11 @@ pipeline:
     case_sensitive: false
     use_regexes: true
     use_word_boundaries: false
+  - name: LexicalSyntacticFeaturizer
+  - name: CountVectorsFeaturizer
+    analyzer: "char_wb"
+    min_ngram: 1
+    max_ngram: 4
   - name: DIETClassifier
     epochs: 150
     entity_recognition: true
@@ -45,8 +42,7 @@ pipeline:
 # https://rasa.com/docs/rasa/core/policies/
 policies:
   - name: MemoizationPolicy
-    max_histoy: 15
-  - name: RulePolicy
+    max_history: 15   
   - name: TEDPolicy
     max_history: 15
     epochs: 100
@@ -55,5 +51,3 @@ policies:
     nlu_threshold: 0.4
     core_threshold: 0.4
     fallback_action_name: "action_default_fallback"
-
-

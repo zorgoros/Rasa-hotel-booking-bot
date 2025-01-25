@@ -104,7 +104,7 @@ responses:
     - text: "Could you please tell me your check-in date?"
 
   utter_ask_checkout_date:
-    - text: "And what about your check-out date?"
+    - text: "what is your check-out date?"
     
   utter_ask_number_of_guests:
     - text: "How many guests will be staying?"
@@ -113,7 +113,7 @@ responses:
     - text: "I'm sorry, I didn't understand that. Could you please rephrase?"
 
   utter_help:
-    - text: >
+    - text: |
         Here are some things you can do:
         - Type "reset" to start over
         - Type "book room" to begin the booking form
