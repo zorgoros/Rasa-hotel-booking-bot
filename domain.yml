@@ -81,8 +81,9 @@ forms:
 
 responses:
   utter_greet:
-    - text: "Hello! I'm Helper_BOT ready to help you book a room.\n
-        How can I help you today?"
+    - text: |
+        - Hello! I'm HELPER_BOT ready to help you book a room.
+        - How can I help you today?
 
   utter_goodbye:
     - text: "Bye"
@@ -115,7 +116,7 @@ responses:
 
   utter_help:
     - text: |
-        Here are some things you can do:
+        - Here are some things you can do:
         - Type "reset" to start over
         - Type "book room" to begin the booking form ( i fyou already did this, you can type "reset" to start over)
 

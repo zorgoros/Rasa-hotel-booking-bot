@@ -78,7 +78,7 @@ HOTEL_BOOKING_CHATBOT/
 1. Download the files or copy them to your system.
 2. Navigate to the directory containing the project files.
 
-#### Option 2: Cloning from GitHub
+#### Option 2: Cloning from my GitHub repository
 1. Clone the repository:
    ```bash
    git clone https://github.com/zorgoros/Rasa-hotel-booking-bot.git
