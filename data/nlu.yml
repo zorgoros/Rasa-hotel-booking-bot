@@ -304,9 +304,9 @@ nlu:
       - [Patricia Brown](name) at your service
       - this is [Michael Jones](name)
       - [Linda Davis](name) speaking
-      - my name is [Robert Miller](name)
+      - my name is [mikel Miller](name)
       - my name is [robert miller](name)
-      - My name is [Alice Johnson](name)
+      - My name is [Mikel Johnson](name)
       - I am [John Doe](name)
       - You can call me [Emily Smith](name)
       - I go by [Michael Brown](name)
@@ -348,6 +348,24 @@ nlu:
       - [Ava](name) speaking
       - [Ethan](name) here
       - My name is [Charlotte](name)
+      -(name) speaking
+      - Just call me [Liam Neeson](name)
+      - [Sophia Turner](name) at your service
+      - My name happens to be [Daniel Craig](name)
+      - [Olivia Wilde](name) is who I am
+      - I am [Mikel Bond](name)
+      - [Isabella Garcia](name) here
+      - You can refer to me as [Noah Davis](name)
+      - [Micheal Thompson](name) is my name
+      - I am [mikeal Martinez](name)
+      - [ava Johnson](name) speaking
+      - [ehsan hunt](name) here
+      - My name is [mariam Green](name)
+      - My name is [maryam](name)
+      - I am [john](name)
+      - You can call me [emily](name)
+      - I go by [Michael](name)
+      - [michael](name) here
       
   
   - intent: provide_checkin_date
