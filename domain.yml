@@ -9,7 +9,6 @@ intents:
   - bot_challenge
   - book_room
   - provide_name
-  - provide_dates
   - provide_guests
   - provide_checkin_date
   - provide_checkout_date
