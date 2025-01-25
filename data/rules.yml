@@ -58,7 +58,7 @@ rules:
     steps:
       - intent: reset
       - action: action_reset_slots
-      - action: utter_help 
+      - action: utter_reset 
   # ---------------------------------------------------
   # FALLBACK
   # ---------------------------------------------------

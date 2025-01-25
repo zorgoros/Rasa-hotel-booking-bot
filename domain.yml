@@ -117,6 +117,9 @@ responses:
         - Type "reset" to start over
         - Type "book room" to begin the booking form
 
+  utter_reset:
+    - text: "All slots have been reset, you can make a new booking now."
+
 actions:
   - action_validate_inputs
   - action_default_fallback

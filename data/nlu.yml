@@ -517,3 +517,22 @@ nlu:
       - cancel
       - wipe data
       - restart process
+
+  - intent: help
+    examples: |
+      - help
+      - i want help
+      - I need help
+      - can you help me?
+      - what can you do?
+      - what are your abilities?
+      - what are you capable of?
+      - what do you know?
+      - what do you understand?
+      - what can you help with?
+      - what can you assist with?
+      - what can you do for me?
+      - what can you do to help me?
+      - what can you do to assist me?
+      - what can you do to support me?
+      - what can you do to aid me
