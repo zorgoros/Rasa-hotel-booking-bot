@@ -18,7 +18,7 @@ pipeline:
   - name: RegexEntityExtractor
     use_lookup_tables: false
     case_sensitive: false
-    use_regexes: true
+    use_regexes: false
     use_word_boundaries: true
   - name: LexicalSyntacticFeaturizer
   - name: CountVectorsFeaturizer

@@ -39,13 +39,11 @@ def parse_checkout_relative(checkout_text: str, dt_checkin: datetime) -> Optiona
     if not checkout_text:
         return None
 
-    # parse with dateparser ignoring year (if user didn't specify)
-    dt_checkout = dateparser.parse(checkout_text)
+    dt_checkout = dateparser.parse(checkout_text)     # parse with dateparser ignoring year (if user didn't specify)
     if not dt_checkout:
         return None  # unparseable
 
-    # If the parsed checkout is already >= checkin, great – no changes
-    if dt_checkout >= dt_checkin:
+    if dt_checkout >= dt_checkin:     # If the parsed checkout is already >= checkin, great – no changes
         return dt_checkout
 
     return dt_checkout
@@ -94,6 +92,7 @@ class ActionValidateInputs(Action):
             # Clearing the slot to force the bot to re-ask
             return [SlotSet("name", None), FollowupAction("hotel_booking_form")]
 
+
         formatted_name = " ".join(word.capitalize() for word in name_slot.split())
 
         # ----------------------------------------------------------------------
@@ -109,6 +108,7 @@ class ActionValidateInputs(Action):
                 SlotSet("checkin_date", None),
                 FollowupAction("hotel_booking_form")
             ]
+
 
         # If checkin in the past, re-prompt
         now = datetime.now()
@@ -127,6 +127,7 @@ class ActionValidateInputs(Action):
         # Parse checkout in a "relative" manner
         dt_checkout = parse_checkout_relative(checkout_slot, dt_checkin)
         if not dt_checkout:
+            logger.warning("Check-out date is invalid or unparseable.")
             dispatcher.utter_message(
                 text="Please provide a valid check-out date (e.g. '26 January 2025')."
             )
@@ -137,6 +138,7 @@ class ActionValidateInputs(Action):
 
         # Now if the final dt_checkout is STILL <= dt_checkin, fail
         if dt_checkout <= dt_checkin:
+            logger.warning("Check-out date is earlier than or equal to check-in date.")
             dispatcher.utter_message(
                 text=(
                     "Check-out date must be after your check-in date.\n"
@@ -160,6 +162,7 @@ class ActionValidateInputs(Action):
         import re
         found_digits = re.findall(r"\d+", guests_slot)
         if not found_digits:
+            logger.warning("Number of guests is invalid or unparseable.")
             dispatcher.utter_message(
                 text="Please provide a valid number of guests (e.g. '3')."
             )
@@ -171,6 +174,7 @@ class ActionValidateInputs(Action):
         # We take the first digit we find as the guest number
         guests_count = int(found_digits[0])
         if guests_count < 1 or guests_count > 20:
+            logger.warning(f"Guests count {guests_count} is outside the valid range (1-20).")
             dispatcher.utter_message(
                 text="Please provide a valid number of guests between 1 and 20."
             )
@@ -186,6 +190,7 @@ class ActionValidateInputs(Action):
 
         # 3a. Connect to DB (or create if not exist)
         #     In production, will connect to a remote DB or use SQLAlchemy.
+        
         os.makedirs("database", exist_ok=True)
         conn = sqlite3.connect("database/hotel_bookings.db")
         cursor = conn.cursor()
@@ -222,6 +227,7 @@ class ActionValidateInputs(Action):
                 guests_count
             ),
         )
+        
         conn.commit()
 
         # we retrieve the newly inserted booking ID or other info
@@ -229,6 +235,7 @@ class ActionValidateInputs(Action):
 
         # Close the DB connection
         conn.close()
+
 
         # Convert booking_id to string for the slot
         str_booking_id = str(booking_id)
@@ -264,9 +271,8 @@ class ActionResetSlots(Action):
         domain: Dict[Text, Any]
     ) -> List[EventType]:
         dispatcher.utter_message(text="Resetting all your data. Let's start fresh!")
-        logger.info("ActionResetSlots triggered")
         # Option 1: Clear all slots:
-        return [AllSlotsReset()]
+        return [AllSlotsReset(), FollowupAction("action_listen")]
         # Option 2: If prefer to do something else after resetting,
         # we can also return [AllSlotsReset(), FollowupAction("action_listen")] 
         # or a new greeting, etc.
