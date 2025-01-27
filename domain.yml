@@ -96,8 +96,15 @@ responses:
 
   utter_confirm_booking: 
     - text: |
-        - Your booking for {name} from {checkin_date} to {checkout_date} for {number_of_guests} guests is confirmed!, Booking ID: {booking_id}.
-        - If you want to make another booking, type "reset" to start over.
+        ✅ **Booking Confirmed!**
+
+        - **Name**: {name}
+        - **Check-in**: {checkin_date}
+        - **Check-out**: {checkout_date}
+        - **Guests**: {number_of_guests}
+        - **Booking ID**: {booking_id}
+
+        Type "reset" if you'd like to start over!
 
   utter_ask_name:
     - text: "Could you please tell me your name?"
