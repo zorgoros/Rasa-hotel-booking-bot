@@ -98,11 +98,11 @@ responses:
     - text: |
         ✅ **Booking Confirmed!**
 
-        - **Name**: {name}
-        - **Check-in**: {checkin_date}
-        - **Check-out**: {checkout_date}
-        - **Guests**: {number_of_guests}
-        - **Booking ID**: {booking_id}
+        - Name: {name}
+        - Check-in: {checkin_date}
+        - Check-out: {checkout_date}
+        - Guests: {number_of_guests}
+        - Booking ID: {booking_id}
 
         Type "reset" if you'd like to start over!
 
