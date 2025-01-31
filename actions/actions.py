@@ -41,7 +41,7 @@ def parse_checkout_relative(checkout_text: str, dt_checkin: datetime) -> Optiona
 
     dt_checkout = dateparser.parse(checkout_text)     # parse with dateparser ignoring year (if user didn't specify)
     if not dt_checkout:
-        return None  # unparseable
+        return None
 
     if dt_checkout >= dt_checkin:     # If the parsed checkout is already >= checkin, great – no changes
         return dt_checkout
@@ -258,6 +258,11 @@ class ActionValidateInputs(Action):
             SlotSet("booking_id", str_booking_id),
         ]
     
+
+# ------------------------------------------------------------------------------
+# 3) ActionResetSlots
+#    This action clears all slots when the user says 'reset'.
+# ------------------------------------------------------------------------------
 class ActionResetSlots(Action):
     """Clears all slots when user says 'reset'."""
 
@@ -277,6 +282,10 @@ class ActionResetSlots(Action):
         # we can also return [AllSlotsReset(), FollowupAction("action_listen")] 
         # or a new greeting, etc.
 
+# ------------------------------------------------------------------------------
+# 4) ActionDefaultFallback 
+#   This action is called when the user's input is not recognized by Rasa's NLU.
+# ------------------------------------------------------------------------------
 class ActionDefaultFallback(Action):
     """Called when the user’s input is not recognized by Rasa’s NLU"""
 
