@@ -258,7 +258,6 @@ class ActionValidateInputs(Action):
             SlotSet("booking_id", str_booking_id),
         ]
     
-
 # ------------------------------------------------------------------------------
 # 3) ActionResetSlots
 #    This action clears all slots when the user says 'reset'.
@@ -282,7 +281,6 @@ class ActionResetSlots(Action):
         # we can also return [AllSlotsReset(), FollowupAction("action_listen")] 
         # or a new greeting, etc.
 
-
 # ------------------------------------------------------------------------------
 # 4) ActionRestartSession
 #    Fully restarts the conversation with a brand-new session.
@@ -303,7 +301,6 @@ class ActionRestartSession(Action):
         # The "Restarted()" event instructs Rasa Core to create a brand-new session
         # so your entire flow restarts from scratch
         return [AllSlotsReset(), Restarted()]
-
 
 # ------------------------------------------------------------------------------
 # 5) ActionDefaultFallback 
