@@ -58,7 +58,6 @@ nlu:
       - assalam o alaikum
       - maa salama
 
-
   - intent: goodbye
     examples: |
       - cu
@@ -187,7 +186,6 @@ nlu:
       - I need [place](room) for [two](number_of_guests) from [June 1 to June 5](date)
       - want to reserve [hotel room](room)
       - need [hotel](room)
-
 
   - intent: provide_name
     examples: |
@@ -366,8 +364,7 @@ nlu:
       - You can call me [emily](name)
       - I go by [Michael](name)
       - [michael](name) here
-      
-  
+        
   - intent: provide_checkin_date
     examples: |
       - I will be checking in on [June 3](checkin_date)
@@ -476,7 +473,6 @@ nlu:
       - in [three years](checkout_date)
       - checkout in [five years](checkout_date)
 
-
   - intent: provide_guests
     examples: |
       - I have [two](number_of_guests) guests
@@ -510,13 +506,31 @@ nlu:
       - reset
       - start over
       - clear
-      - restart
-      - new session
       - forget my data
+      - wipe data
+      - reset process
+      - fill data again
+      - new info
+      
+  - intent: restart_session
+    examples: |
+      - restart_session
+      - start from beggining
+      - new conversation
+      - restart chat
+      - new session
       - begin again
       - cancel
-      - wipe data
       - restart process
+      - start over
+      - new chat
+      - new start
+      - start from scratch
+      - restart session
+      - restart conversation
+      - start over fully
+      - new conversation
+      - brand new start
 
   - intent: help
     examples: |

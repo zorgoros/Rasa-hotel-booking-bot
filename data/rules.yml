@@ -52,19 +52,18 @@ rules:
       - action: action_validate_inputs
       - action: utter_confirm_booking
   # ---------------------------------------------------
-  # This rule is triggered when the user wants to reset the bot
+  # RESET the bot or the form
   # ---------------------------------------------------
+  # for when form is active
   - rule: Reset while form is active
     condition:
-      # This means the rule only applies if the form is running
       - active_loop: hotel_booking_form
     steps:
       - intent: reset
       - action: action_reset_slots
       - active_loop: null  # forcibly deactivate the form
       - action: utter_reset
-
-
+  # for when form is not active
   - rule: Reset the bot
     steps:
       - intent: reset
@@ -72,6 +71,23 @@ rules:
       - active_loop: null    # Force the form to end if it's active
       - action: utter_reset 
     
+  # ---------------------------------------------------
+  # RESTART SESSION casue the bot to restart the conversation
+  # ---------------------------------------------------
+  # for when form is active
+  - rule: Restart while form is active
+    condition:
+      - active_loop: hotel_booking_form
+    steps:
+      - intent: restart_session
+      - action: action_restart_session
+      - action: utter_restart_session
+  # for when form is not active
+  - rule: Restart entire conversation
+    steps:
+      - intent: restart_session
+      - action: action_restart_session
+      - action: utter_restart_session
   # ---------------------------------------------------
   # FALLBACK
   # ---------------------------------------------------

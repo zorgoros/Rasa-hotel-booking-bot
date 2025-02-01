@@ -14,6 +14,7 @@ intents:
   - provide_checkout_date
   - reset
   - help
+  - restart_session
 
 entities:
   - name
@@ -38,6 +39,7 @@ slots:
     mappings:
       - type: from_text
         not_intent:
+          - restart_session
           - reset
         conditions:
           - active_loop: hotel_booking_form
@@ -48,6 +50,7 @@ slots:
     mappings:
       - type: from_text
         not_intent:
+          - restart_session
           - reset
         conditions:
           - active_loop: hotel_booking_form
@@ -58,6 +61,7 @@ slots:
     mappings:
       - type: from_text
         not_intent:
+          - restart_session
           - reset
         conditions:
           - active_loop: hotel_booking_form
@@ -88,6 +92,7 @@ responses:
   utter_greet:
     - text: |
         - Hello! I'm HELPER_BOT ready to help you book a room.
+        - Type "help" for usage instructions.
         - How can I help you today?
 
   utter_goodbye:
@@ -129,17 +134,21 @@ responses:
   utter_help:
     - text: |
         - Here are some things you can do:
-        - Type "reset" to start over
-        - Type "book room" to begin the booking form ( i fyou already did this, you can type "reset" to start over)
+        - Type "reset" to clear data and start over getting data.
+        - Type "restart or restart session" to start a new session.
+        - Type "book room" to begin the booking form ( if you already did this, you can type "reset" to start over)
 
   utter_reset:
     - text: "All slots have been reset, you can make a new booking now."
+
+  utter_restart_session:
+    - text: "Session has been restarted, you can start new conversation now."
 
 actions:
   - action_validate_inputs
   - action_default_fallback
   - action_reset_slots
-
+  - action_restart_session
 
 session_config:
   session_expiration_time: 60

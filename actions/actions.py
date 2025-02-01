@@ -6,7 +6,7 @@ import sqlite3  # For database operations (e.g., storing booking data)
 import re  # For regular expression operations (e.g., text processing)
 from rasa_sdk import Action, Tracker  # For defining custom actions and tracking conversation state
 from rasa_sdk.executor import CollectingDispatcher  # For dispatching responses to the user
-from rasa_sdk.events import SlotSet, EventType, FollowupAction, AllSlotsReset   # For managing events and slots in the conversation
+from rasa_sdk.events import SlotSet, EventType, FollowupAction, AllSlotsReset, Restarted  # For managing events and slots in the conversation
 import logging # For logging messages to the console
 import os
 
@@ -282,8 +282,31 @@ class ActionResetSlots(Action):
         # we can also return [AllSlotsReset(), FollowupAction("action_listen")] 
         # or a new greeting, etc.
 
+
 # ------------------------------------------------------------------------------
-# 4) ActionDefaultFallback 
+# 4) ActionRestartSession
+#    Fully restarts the conversation with a brand-new session.
+# ------------------------------------------------------------------------------
+class ActionRestartSession(Action):
+    """Fully restarts the conversation (new session)."""
+
+    def name(self) -> Text:
+        return "action_restart_session"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any]
+    ) -> List[EventType]:
+        dispatcher.utter_message(text="Starting a completely new conversation now!")
+        # The "Restarted()" event instructs Rasa Core to create a brand-new session
+        # so your entire flow restarts from scratch
+        return [AllSlotsReset(), Restarted()]
+
+
+# ------------------------------------------------------------------------------
+# 5) ActionDefaultFallback 
 #   This action is called when the user's input is not recognized by Rasa's NLU.
 # ------------------------------------------------------------------------------
 class ActionDefaultFallback(Action):
