@@ -37,6 +37,8 @@ slots:
     type: text
     mappings:
       - type: from_text
+        not_intent:
+          - reset
         conditions:
           - active_loop: hotel_booking_form
             requested_slot: checkin_date
@@ -45,6 +47,8 @@ slots:
     type: text
     mappings:
       - type: from_text
+        not_intent:
+          - reset
         conditions:
           - active_loop: hotel_booking_form
             requested_slot: checkout_date
@@ -53,6 +57,8 @@ slots:
     type: text
     mappings:
       - type: from_text
+        not_intent:
+          - reset
         conditions:
           - active_loop: hotel_booking_form
             requested_slot: number_of_guests
@@ -77,7 +83,6 @@ forms:
       - checkin_date
       - checkout_date
       - number_of_guests
-
 
 responses:
   utter_greet:

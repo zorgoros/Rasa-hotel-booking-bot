@@ -54,11 +54,24 @@ rules:
   # ---------------------------------------------------
   # This rule is triggered when the user wants to reset the bot
   # ---------------------------------------------------
+  - rule: Reset while form is active
+    condition:
+      # This means the rule only applies if the form is running
+      - active_loop: hotel_booking_form
+    steps:
+      - intent: reset
+      - action: action_reset_slots
+      - active_loop: null  # forcibly deactivate the form
+      - action: utter_reset
+
+
   - rule: Reset the bot
     steps:
       - intent: reset
       - action: action_reset_slots
+      - active_loop: null    # Force the form to end if it's active
       - action: utter_reset 
+    
   # ---------------------------------------------------
   # FALLBACK
   # ---------------------------------------------------
