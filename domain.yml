@@ -129,8 +129,10 @@ responses:
     - text: "How many guests will be staying?"
 
   utter_fallback:
-    - text: "I'm sorry, I didn't understand that. Could you please rephrase?"
-
+    - text: |
+        - I'm sorry, I didn't understand that. Could you please rephrase?
+        - Or you can type "help" for usage instructions.
+        
   utter_help:
     - text: |
         - Here are some things you can do:
