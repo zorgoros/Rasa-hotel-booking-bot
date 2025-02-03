@@ -82,6 +82,7 @@ rules:
       - intent: restart_session
       - action: action_restart_session
       - action: utter_restart_session
+  
   # for when form is not active
   - rule: Restart entire conversation
     steps:
