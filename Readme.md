@@ -174,6 +174,19 @@ HOTEL_BOOKING_CHATBOT/
 
 ---
 
+## Extras
+### Docs folder includes some extra files:
+1. LICENSE : License agreement for the project.
+2. name.txt : A text file containing the names for further training or using lookup.
+3. Rasa_Commands_detailed.pdf : A detailed guide on Rasa commands for further learning.
+
+### ROOT:
+1. cleanup_models.sh an executable file for cleaning up the models directory.
+2. .gitignore : Ignore files and directories for version control (git related).
+
+
+---
+
 ## Future Enhancements
 
 1. **Add optional features like payment processing and meal preferences**:
