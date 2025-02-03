@@ -31,7 +31,7 @@ The chatbot is designed to:
 - Users can reset the conversation to start fresh.
 
 ### Web Interface:
-- A basic web UI is provided (`index.html`) for interaction with the bot.
+- A basic web UI is provided (`chatbot.html`) for interaction with the bot.
 
 ---
 
@@ -67,7 +67,7 @@ HOTEL_BOOKING_CHATBOT/
 ## Setup Instructions
 
 ### 1. Prerequisites
-- Python 3.9 or later
+- Python 3.9 or later (3.9 is preferrable)
 - Rasa (install via `pip install rasa`)
 - SQLite (pre-installed with Python)
 - Flask (for the optional API)
@@ -114,12 +114,12 @@ HOTEL_BOOKING_CHATBOT/
 ## How to Use
 
 ### Run the Chatbot
-1. Start the Rasa action server (for custom actions):
+1. Start the Rasa action server (terminal 1)(for custom actions):
    ```bash
    rasa run actions
    ```
 
-2. Start the Rasa server:
+2. Start the Rasa server (terminal 2):
    ```bash
    rasa run --cors "*" --debug
    ```
@@ -130,21 +130,23 @@ HOTEL_BOOKING_CHATBOT/
    ```
 
 4. (Optional) Run the web UI:
-   - Open `index.html` in your browser.
-   - Ensure the Rasa REST endpoint is running:
+   - Open `chatbot.html` in your browser.
+   - Ensure the Rasa REST endpoint is running befor opening the html file:
      ```bash
      rasa run --cors "*" --enable-api
      ```
 
 ### Interact with the Bot
 #### Example Queries:
+- “Hi.”
 - “I want to book a room.”
 - “My name is John Doe.”
-- “Check-in on January 25th, check-out on January 30th.”
+- “Check-in on January 25th, check-out on January 30th.”(use future dates for consistent and errorless experience)
 - “2 guests”
 
 #### Commands:
-- `reset`: Restart the conversation.
+- `restart`: Close the conversation and start a fresh one.
+- `reset`: clear all slots from the current conversation.
 - `help`: Show usage instructions.
 
 ---
